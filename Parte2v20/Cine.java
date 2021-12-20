@@ -11,9 +11,9 @@ import java.util.Random;
 public class Cine {
     Random rand = new Random(); //objeto Random
     //atributos
-    private String nombre;
-    private int numAsientos;
-    private Sala[] salas;
+    private String nombre; //nombre del cine
+    private int numAsientos; //numero de asientos por sala
+    private Sala[] salas; //array de objeto Sala del cine
 
 
 
@@ -28,24 +28,21 @@ public class Cine {
     //llena el array salas de objetos Sala
     public void crearSalas(){
         for (int i = 0; i < getNumSalas(); i++){
-            getSalas()[i] = new Sala(getNumAsientos());
+            getSalas()[i] = new Sala(getNumAsientos()); //se agnade la sala al array
         }
     }
 
-    //llena el cine
+    //llena el cine (asigna objetos Espectador a cada objeto Asiento de cada Sala)
     public void llenarCine(){
-        for (int j =0; j < this.getNumSalas(); j++){
-            System.out.println("Llenando sala " + j);
+        for (int j =0; j < this.getNumSalas(); j++){ //bucle por cada sala
+            System.out.println("Llenando sala " + j + " con la pelicula " + getSalas()[j].getP().getNombre() + ". Precio por entrada " + getSalas()[j].getP().getPrecio()); //presentacion de la sala
             getSalas()[j].imprimirArray(); //estado inicial de la sala
-            System.out.println("---------------------------");
-            getSalas()[j].sentar();
+            System.out.println("---------------------------"); //separador visual
+            getSalas()[j].sentar(); //se sientan los espectadores en el cine
             System.out.println("Sala " + j + " llena");
-            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"); //separador visual entre salas
         }
     }
-
-
-
 
 
     //getters y setters

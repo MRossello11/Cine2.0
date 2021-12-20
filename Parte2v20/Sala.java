@@ -1,6 +1,6 @@
 /**
  * @author MRossello11
- * @version 2.2
+ * @version 2.3
  * @since 09/12/2021
  * @description clase Sala del proyecto Cine*/
 
@@ -12,21 +12,27 @@ import java.util.Random;
 public class Sala {
     Random rand = new Random();
     //atributos
-    private int numAsientos;
-    private int numFilas;
-    private int numColumnas;
-    private Asiento[][] asientos;
-    private Pelicula p;
-    private ArrayList<Asiento> asientosDisponibles;
+    private int numAsientos; //numero de asientos
+    private int numFilas; //numero de filas
+    private int numColumnas; //numero de columnas
+    private Asiento[][] asientos; //array de objetos Asiento
+    private ArrayList<Asiento> asientosDisponibles; //arrayList con las posiciones de asientos libres, se usa un arrayList para mejorar la eficiencia del programa
+    private Pelicula p; //pelicula que se emite en la sala
+    private String[] letrasColumnas; //contiene las letras que se asignaran a las columnas
+    private static double ganancias = 0;
+
+    //constantes
+    private final String[] ALFABETO = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"}; //letras del abecedario
 
     public Sala(int n) {
         this.numAsientos = n;
-        this.numFilas = 3;
+        this.numFilas = generarFilas();
         this.numColumnas = generarColumnas();
         this.asientos = new Asiento[this.getNumFilas()][this.getNumColumnas()];
         this.asientosDisponibles = new ArrayList<Asiento>();
         this.generarAsientos(); //llenar el array
         this.p = new Pelicula();
+        this.letrasColumnas = generarArrayLetras(getNumColumnas());
 
     }
 
@@ -62,7 +68,7 @@ public class Sala {
                 /*cuando el resto sea mayor que la fila actual y sea la penultima columna, salte la iteracion,
                 para cuando numAsientos/numFilas no sea entero y se asignen menos asientos a la ultima columna
                 para compensar */
-                if (i > resto && j == (getNumColumnas()-1)){ //en i>resto segun la direccion del simbolo los asientos nulos estaran en las ultimas filas (configuracion actual) o en las primeras (i<resto)
+                if (i < resto && j == (getNumColumnas()-1)){ //en i>resto segun la direccion del simbolo los asientos nulos estaran en las ultimas filas (configuracion actual) o en las primeras (i<resto)
                     continue;
                 }
 
@@ -72,51 +78,99 @@ public class Sala {
         }
     }
 
-    //imprimir el array asientos
+    //imprime el array asientos
     public void imprimirArray(){
-        for (int i = 0; i < getNumFilas(); i++){
-            for (int j = 0; j < getNumColumnas(); j++){
+        for (int i = 0; i < getNumFilas(); i++){ //bucle por cada fila
+            for (int j = 0; j < getNumColumnas(); j++){ //bucle por cada columna
 
                 //para evitar errores de nulos en las columnas donde haya menos filas
                 if (getAsientos()[i][j] == null){ //si el objeto es nulo, se pasa
                     continue;
                 }
-                System.out.print(getAsientos()[i][j].getPosicion(j) + " ");
+                //se imprime el asiento
+                System.out.print(getAsientos()[i][j].getPosicion(getLetraCol(j)) + " ");
             }
-            System.out.print("\n");
+            System.out.print("\n"); //al final de cada fila se hace un salto de linea para mejor visualizacion
         }
     }
 
 
     //asigna objetos Espectador a cada objeto Asiento
     public void sentar(){
-        System.out.println(getNumFilas() + " " + getNumColumnas());
-        int asientosOcupados = 0;
-        while (asientosOcupados < getNumAsientos()){ //bucle por todos los asientos
+//        System.out.println(getNumFilas() + " " + getNumColumnas()); //debug
+        int asientosOcupados = 0; //contador de asientos ocupados
+        do{ //bucle por todos los asientos
 
-            Espectador e = new Espectador();
+            Espectador e = new Espectador(); //se crea el objeto espectador
 
             //evaluacion de si el espectador cumple con los requisitos de dinero y edad
             if (e.getDinero() >= getP().getPrecio() && e.getEdad() >= getP().getEdadMinima()){
                 //si entra, se le busca un Asiento libre
-//                int numRandom = (getAsientosDisponibles().size()<=0)? rand.nextInt(0, getAsientosDisponibles().size()):0;
-                int numRandom = rand.nextInt(0, getAsientosDisponibles().size());
-                getAsientos()[getAsientosDisponibles().get(numRandom).getFil()][getAsientosDisponibles().get(numRandom).getCol()].setOcupado(true, e); //asignar el asiento
-                System.out.println(getAsientos()[getAsientosDisponibles().get(numRandom).getFil()][getAsientosDisponibles().get(numRandom).getCol()]); //debug
+                int numRandom;
+//                int numRandom = (getAsientosDisponibles().size()>0)? rand.nextInt(0, getAsientosDisponibles().size()):0;
+                try{ //en caso de que se intente asignar un asiento que no existe
+                    numRandom = rand.nextInt(0, getAsientosDisponibles().size()); //se genera un numero random que sera el asiento que se asignara al espectador
+                    System.out.println(numRandom);
+                } catch(Exception IllegalArgumentException){
+                    break;
+                }
+
+                try {
+                    getAsientos()[getAsientosDisponibles().get(numRandom).getFil()][getAsientosDisponibles().get(numRandom).getCol()].setOcupado(true, e); //asignar el asiento
+//                    System.out.println("Asiento asignado "); //debug
+                }catch (Exception IndexOutOfBoundsException){
+                    System.out.println("Error");
+                }
+//                System.out.println(getAsientos()[getAsientosDisponibles().get(numRandom).getFil()][getAsientosDisponibles().get(numRandom).getCol()]); //debug
                 getAsientosDisponibles().remove(numRandom); //se elimina el asiento como asiento disponible
-                asientosOcupados++;
+                asientosOcupados++; //como se ha asignado un asiento, aumenta el contador
+                ganancias += p.getPrecio();
+                imprimirArray(); //se muestra como va quedando la sala
+//                System.out.println("Asientos libres: " + getAsientosDisponibles().size()); //debug
+                System.out.println("---------------------------"); //separador visual
+
             } else { //si no cumple con los requisitos se muestra por pantalla el porque
                 System.out.println("El espectador " + ((e.getDinero()<getP().getPrecio())? "no tiene suficiente dinero": "no tiene la edad suficiente"));
             }
-            imprimirArray(); //se muestra como va quedando la sala
-            System.out.println("---------------------------");
-        }
+        }while (asientosOcupados < getNumAsientos()); //mientras haya asientos libres, se ejecutara el bucle
     }
-
+    public String[] generarArrayLetras(int numColumnas){
+        String columnas[] = new String[numColumnas];
+        for (int i = 0; i < numColumnas; i++){
+            String letra = "";
+            int indice = i/ALFABETO.length;
+            if (i>701){ //a partir de la columna ZZ (numero 701), el programa empieza a dar problemas asi que se devuelve el numero de la columna
+                columnas[i] = Integer.toString(i-702);
+                continue;
+            }
+            if (indice>0) { //cuando hay mas de una letra
+                letra += ALFABETO[indice-1];
+            }
+            letra += ALFABETO[i%ALFABETO.length]; //se agnade una letra
+            columnas[i] = letra; //se asigna la letra a la posicion correspondiente
+//            System.out.println(letra); //debug
+        }
+        return columnas;
+    }
 
 
     //getters y setters
 
+    public static double getGanancias() {
+        return ganancias;
+    }
+
+    public static void setGanancias(double ganancias) {
+        Sala.ganancias = ganancias;
+    }
+
+    public String getLetraCol(int colActual){
+        return getLetrasColumnas()[colActual];
+    }
+
+    public String[] getLetrasColumnas() {
+        return letrasColumnas;
+    }
 
     public Pelicula getP() {
         return p;
