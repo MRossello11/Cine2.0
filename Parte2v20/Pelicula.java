@@ -10,11 +10,12 @@ import java.util.Random;
 
 public class Pelicula {
     Random rand = new Random();
-    private String nombre;
-    private String director;
-    private int edadMinima;
-    private double precio;
-    private int duracion;
+    //atributos
+    private String nombre; //titulo de la pelicula
+    private String director; //nombre del director
+    private int edadMinima; //edad minima para poder ver la pelicula
+    private double precio; //precio por entrada
+    private int duracion; //duracion de la pelicula (en minutos)
 
     //listas con nombres de peliculas y directores
     private static final String[] titulos = {"Jurassic Park", "Django", "Alien", "Pacific rim", "Inception"};
@@ -26,11 +27,12 @@ public class Pelicula {
         this.nombre = titulos[rand.nextInt(0, titulos.length)]; //elegir un titulo aleatorio
         this.director = directores[rand.nextInt(0, directores.length)]; //elegir un director aleatorio
         this.edadMinima = generarEdadMinima(); //edad minima con la que se puede entrar
-        this.precio = generarPrecio(); //precio por entrada
-        this.duracion = generarDuracion(); //duracion de la pelicula
+        this.precio = generarPrecio(); //se genera el precio por entrada
+        this.duracion = generarDuracion(); //se genera la duracion de la pelicula
     }
+
     private int generarDuracion(){
-        return rand.nextInt(60,240);
+        return rand.nextInt(60,240); //se interpreta que solo se emiten largometrages (de mas de 60 minutos)
     }
 
     private int generarEdadMinima(){
@@ -40,18 +42,10 @@ public class Pelicula {
     private double generarPrecio(){
         return rand.nextDouble(3.5,8);
     }
+
     //getters
-
-    public int getDuracion() {
-        return duracion;
-    }
-
     public String getNombre() {
         return nombre;
-    }
-
-    public String getDirector() {
-        return director;
     }
 
     public int getEdadMinima() {

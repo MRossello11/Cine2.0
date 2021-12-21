@@ -2,7 +2,9 @@
  * @author MRossello11
  * @version 2.3
  * @since 10/12/2021
- * @description clase Asiento del proyecto Cine*/
+ * @description clase Asiento del proyecto Cine. Contiene la posicion que ocupa asi como el espectador que se sienta ahi
+ * (si hay alguno) y contiene el metodo que permite distinguir visualmente los asientos ocupados de los desocupados*/
+
 package Parte2v20;
 
 public class Asiento {
@@ -12,10 +14,10 @@ public class Asiento {
     public static final String RESET = "\u001B[0m";
 
     //atributos
-    private int fil;
-    private int col;
-    private boolean ocupado;
-    private Espectador espectador;
+    private int fil; //fila del asiento
+    private int col; //columna del asiento
+    private boolean ocupado; //estado del asiento
+    private Espectador espectador; //espectador que se sienta en el asiento
 
     //constructor
     public Asiento(int fil, int col) {
@@ -34,21 +36,13 @@ public class Asiento {
         }
     }
 
-
+    //getters y setters
     public int getFil() {
         return fil;
     }
 
-    public void setFil(int fil) {
-        this.fil = fil;
-    }
-
     public int getCol() {
         return col;
-    }
-
-    public void setCol(int col) {
-        this.col = col;
     }
 
     public Espectador getE() {
