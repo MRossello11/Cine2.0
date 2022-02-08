@@ -37,4 +37,6 @@ public class Main {
 
         System.out.println(Sala.getEspectadoresSinDineroOEdad() + " espectadores no han entrado por falta de dinero o edad");
     }
+
+
 }
